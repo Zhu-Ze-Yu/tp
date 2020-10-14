@@ -127,30 +127,25 @@ public class Storage {
         return chapters;
     }
 
-    public ArrayList<Card> loadCard(String module, String chapter) throws FileNotFoundException {
+    public ArrayList<Card> loadCard(String module, String chapter) throws FileNotFoundException, InvalidFileFormatException {
         File f = new File(filePath + "/" + module + "/" + chapter + ".txt");
         boolean fileExists = f.exists();
         if (!fileExists) {
             throw new FileNotFoundException();
         }
 
-        try {
-            ArrayList<Card> cards = new ArrayList<>();
-            Scanner s = new Scanner(f);
-            while (s.hasNext()) {
-                //to read the card
-                String fileCommand = s.nextLine();
-                String[] args = fileCommand.split(QUESTION_ANSWER_PREFIX, 2);
-                String question = Parser.parseQuestioninFile(args[0]);
-                String answer = Parser.parseAnswerinFile(args[1]);
-                Card card = new Card(question, answer);
-                cards.add(card);
-            }
-            return cards;
-        } catch (InvalidFileFormatException e) {
-            System.out.println("The format of questions and answers maybe invalid," +
-                    " it should be [Q] QUESTION | [A] Answer");
+        ArrayList<Card> cards = new ArrayList<>();
+        Scanner s = new Scanner(f);
+        while (s.hasNext()) {
+            //to read the card
+            String fileCommand = s.nextLine();
+            String[] args = fileCommand.split(QUESTION_ANSWER_PREFIX, 2);
+            String question = Parser.parseQuestioninFile(args[0]);
+            String answer = Parser.parseAnswerinFile(args[1]);
+            Card card = new Card(question, answer);
+            cards.add(card);
         }
+        return cards;
     }
 
     public void saveCards(CardList cards, String module, String chapter) throws IOException {
